@@ -7,6 +7,7 @@ from django.core.files.storage import FileSystemStorage
 import json
 from django.contrib import auth
 
+from django.contrib.auth.decorators import login_required
 
 from .forms import UploadFileForm
 from .models import MapData
@@ -15,14 +16,14 @@ from .lib.fishnet_update import income_data
 
 class Home(TemplateView):
     template_name = 'home.html'
-
+@login_required
 def upload(request):
     context = {}
     
     if request.method == 'POST':
         uploaded_file = request.FILES['document']
         
-        data_id = handle_uploaded_file(uploaded_file)
+        data_id = _handle_uploaded_file(uploaded_file)
         
         fs = FileSystemStorage()
         name = fs.save(str(data_id), uploaded_file)
@@ -34,7 +35,7 @@ def upload(request):
 
 
     
-def handle_uploaded_file(file):
+def _handle_uploaded_file(file):
     file_data = json.load(file)
     data_url = file_data['data_url']
     title = file_data['title']
@@ -52,7 +53,7 @@ def handle_uploaded_file(file):
     print(result)
     return data_id
 
-    
+@login_required
 def map_list(request):
     maps = MapData.objects.all()
     return render(request, 'map_list.html', {
