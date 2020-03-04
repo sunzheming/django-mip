@@ -1,0 +1,16 @@
+body{
+/*   padding: 4rem 0rem; */
+}
+
+/* .container{ */
+.container-fluid{
+  background-color: #FFF;
+  padding: 0;
+  display: block;
+  margin: 0 auto;
+  max-width: 100%;
+}
+
+.container-fluid{
+  margin-top: 4em;
+}

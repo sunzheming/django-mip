@@ -4,13 +4,13 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-  <link rel="stylesheet" type="text/css" href="{% static 'css/app.css' %}">
-  <title>{% block title %}My Site{% endblock %}</title>
+  <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+  <title>{% block title %}SNARC Data Portal{% endblock %}</title>
 </head>
 <body>
   <nav class="navbar navbar-expand-lg navbar-light mb-4" style="background-color:#decdc3">
     <div class="container">
-      <a class="navbar-brand" href="{% url 'home' %}">My Site</a>
+      <a class="navbar-brand" href="{% url 'home' %}">SNARC Data Portal</a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -20,13 +20,21 @@
             <a class="nav-link" href="{% url 'home' %}">Home</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'upload' %}">Simple Upload</a>
+            <a class="nav-link" href="{% url 'upload' %}">Upload</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">Model Forms Upload</a>
+            <a class="nav-link" href="{% url 'maps' %}">Maps</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">Model Forms Upload (CBV)</a>
+            <a class="nav-link" href="#">Backup button</a>
+          </li>
+            {% if user.is_authenticated %}
+            <a class="nav-link" href="#">hello {{user.username}} </a>
+            <a class="nav-link" href="{% url 'logout' %}">logout</a>
+            {% else %}
+            <a class="nav-link" href="{% url 'login' %}">Log in</a>
+            {% endif %}
+          <li class="nav-item">
           </li>
         </ul>
       </div>
