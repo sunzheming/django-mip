@@ -2,10 +2,7 @@
 
 {% block content %}
 
-  {% block content_header %}
-    <h2>Data</h2>
 
-  {% endblock %}
   {% block page_content %}
         <div class="container-fluid">
             <div class="row">
@@ -18,7 +15,7 @@
                         <p class="card-text">Upload time: {{file.date_created}}</p>
 
                         <a href="#" class="card-link">{{file.user_name}}</a>
-
+                        <a href="/maps/{{ file.map_id}}" methods="GET" class="card-link">Download</a>
                         </div>
                     </li>
                     {% endfor %}

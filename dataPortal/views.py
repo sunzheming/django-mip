@@ -5,6 +5,7 @@ from datetime import datetime
 from django.views.generic import TemplateView, ListView, CreateView
 from django.core.files.storage import FileSystemStorage
 import json
+import os
 from django.contrib import auth
 
 from django.contrib.auth.decorators import login_required
@@ -16,6 +17,8 @@ from .lib.fishnet_update import income_data
 
 class Home(TemplateView):
     template_name = 'home.html'
+    
+    
 @login_required
 def upload(request):
     context = {}
@@ -55,37 +58,20 @@ def _handle_uploaded_file(file):
 
 @login_required
 def map_list(request):
-    maps = MapData.objects.all()
+    maps = MapData.objects.all().order_by('-map_id')
     return render(request, 'map_list.html', {
         'maps': maps
     })
 
-
-
-# def login(request):
-#     return render(request, "login.html")
-
-
-# def login_check(request):
-#     username = request.POST.get("username", "")
-#     password = request.POST.get("password", "")
-#     user = auth.authenticate(request, username=username, password=password)
-#     if user is not None:
-#         auth.login(request, user)
-#         return redirect("/dashboard/")
-#     else:
-#         return render(request, "login.html", {"message": "登录名或密码错误！"})
-
+@login_required
+def download(request, filename):
+    file_path = 'uploaded/%s' % (filename)
     
-# def upload_file(request):
-#     if request.method == 'POST':
-#         print('=======')
-#         form = UploadFileForm(request.POST, request.FILES)
-#         if form.is_valid():
-#             form.save()
-#             return redirect('home')
-#         else:
-#             form = UploadFileForm()
-#         return render(request, 'upload.html', {
-#             'form': form
-#         })
+    if os.path.exists(file_path):
+        with open(file_path, 'rb') as fh:
+            response = HttpResponse(fh.read(), content_type="application/vnd.ms-excel")
+            response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file_path)
+            return response
+    raise Http404
+
+

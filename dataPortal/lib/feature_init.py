@@ -87,5 +87,5 @@ class DB():
         self.conn.close()
         
         
-# clean_up_the_fishnet()
+clean_up_the_fishnet()
 # clean_up_count()
