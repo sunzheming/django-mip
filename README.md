@@ -10,4 +10,5 @@ Web server 34.94.219.251
 
 Sql server 34.94.253.37
 
+
 Cloud storage jimmy-mip-dev
