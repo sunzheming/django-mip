@@ -18,6 +18,9 @@ from .lib.fishnet_update import income_data
 class Home(TemplateView):
     template_name = 'home.html'
     
+def test_page(request):
+    print(request.GET)
+    return render(request, 'test_page.html')
     
 @login_required
 def upload(request):

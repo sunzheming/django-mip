@@ -13,4 +13,5 @@ urlpatterns = [
     url(r'^logout/$',LogoutView.as_view(), name='logout'),
 #     path('<str:filepath>/', views.download_file),
     path('maps/<str:filename>', views.download, name='file_link'),
+    path('test/', views.test_page, name='test_page'),
 ]

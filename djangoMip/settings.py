@@ -25,7 +25,7 @@ SECRET_KEY = 'qpmv#9k1a)%+q%u@yy2^udr8kn-565dwfkg5@#xtyee2=cwaq#'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['34.94.219.251']
+ALLOWED_HOSTS = ['34.94.221.141', 'localhost']
 
 
 # Application definition
@@ -77,10 +77,10 @@ WSGI_APPLICATION = 'djangoMip.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'django_mip',
+        'NAME': 'mip_dev',
         'USER': 'root',
         'PASSWORD': 'nEo2I10c6mKrGt1l',
-        'HOST': '34.94.253.37',
+        'HOST': '34.94.9.243',
     }
 }
 

@@ -1,0 +1,56 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>ArcGIS JavaScript Tutorials: Display a Web Map</title>
+  <style>
+    html, body, #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+  </style>
+  <link rel="stylesheet" href="https://js.arcgis.com/4.14/esri/themes/light/main.css">
+<script src="https://js.arcgis.com/4.14/"></script>
+  <script>
+    require([
+      "esri/WebMap",
+      "esri/views/MapView",
+      "esri/core/watchUtils"
+    ], function(WebMap, MapView, watchUtils) {
+
+      var webmap = new WebMap({
+        portalItem: {
+          id: "41281c51f9de45edaf1c8ed44bb10e30"
+        }
+      });
+
+      var view = new MapView({
+        container: "viewDiv",
+        map: webmap
+      });
+      watchUtils.whenTrue(view, "stationary", function() {
+
+
+          // Get the new extent of the view only when view is stationary.
+          if (view.extent) {
+            var info = [
+              view.extent.xmin.toFixed(2),
+              view.extent.xmax.toFixed(2),
+              view.extent.ymin.toFixed(2),
+              view.extent.ymax.toFixed(2)
+            ];
+            console.log(info);
+          }
+        });
+    });
+
+        
+  </script>
+</head>
+<body>
+  <div id="viewDiv"></div>
+    
+</body>
+</html>
