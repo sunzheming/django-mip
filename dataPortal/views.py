@@ -43,6 +43,10 @@ def upload(request):
     
 def _handle_uploaded_file(file):
     file_data = json.load(file)
+    
+    analysis_data = income_data(file_data)
+    fishnet_list = analysis_data['fishnet_data']
+    
     data_url = file_data['data_url']
     title = file_data['title']
     lat = file_data['lat']
@@ -51,17 +55,22 @@ def _handle_uploaded_file(file):
                           data_url=data_url,
                           latitude=lat,
                           longtitude=longt,
+                          fishnet_1=fishnet_list[4],
+                          fishnet_2=fishnet_list[3],
+                          fishnet_3=fishnet_list[2],
+                          fishnet_4=fishnet_list[1],
+                          fishnet_5=fishnet_list[0],
+                          
                           )
     
     data_id = save_data.pk
-    
-    result = income_data(file_data)
-    print(result)
+
+    print('Upload and Analysis success')
     return data_id
 
 @login_required
 def map_list(request):
-    maps = MapData.objects.all().order_by('-map_id')
+    maps = MapData.objects.all().order_by('-data_id')
     return render(request, 'map_list.html', {
         'maps': maps
     })

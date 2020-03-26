@@ -6,12 +6,11 @@ import numpy as np
 from arcgis.gis import GIS
 import json
 from pyproj import Transformer
-from configparser import ConfigParser
 from datetime import datetime
 import ast
 import os
 
-
+result_fishnet = []
 class Cell(object):
     def __init__(self, fishnet_data, OID):
         self.top = None
@@ -31,10 +30,10 @@ class Cell(object):
 # this function will recieve a uploaded file and update the database and fishnet
 # this function will return a file name to flask and save the json file with this name
 def income_data(file_data):
-
-    location_OID = _fishnet_update(file_data)    
-
-    return 'success'
+#     fishnet_data = _fishnet_update(file_data)
+    _fishnet_update(file_data)
+    analysis_result = {'fishnet_data': result_fishnet}
+    return(analysis_result)
         
 
 def _fishnet_update(new_data):
@@ -85,7 +84,7 @@ def _fishnet_update(new_data):
     location_OID = fishnet_matrix[location_x, location_y].OID
     
     # Update the data in the fishnet 5
-    update_feature_layer(5, location_OID)
+    _update_feature_layer(5, location_OID)
     
     # merge the data into others fishnet and update
     _merge_fishnet(4, location_x, location_y)
@@ -103,11 +102,11 @@ def _location_converter(location_data):
     return web_coor
 
 # this function get the fishnet no and OID to update the fishnet data. 
-def update_feature_layer(fishnet_no, OID):
+def _update_feature_layer(fishnet_no, OID):
+    result_fishnet.append(OID)
     fishnet_order = 5 - fishnet_no
     gis = GIS()
-    search_result = gis.content.search('title:jimmy_mip_1')
-    map_layer = search_result[0]
+    map_layer = gis.content.get('3c6017c113cd4d94a1b414def96ad7e2')
     fishnet = map_layer.layers[fishnet_order]
     feature_updated = fishnet.query('OID = %s' % (OID)).features[0]
     feature_updated.attributes['data_count'] += 1
@@ -126,7 +125,7 @@ def _merge_fishnet(fishnet_no, location_x, location_y):
     new_oid = ((fishnet_len - new_location_x - 1) * fishnet_len) + new_location_y + 1
     print(fishnet_no, new_location_x, new_location_y, new_oid)
 #     new_oid = (location_y - 1) * (10 * pow(2, fishnet_no - 1)) + location_x
-    update_feature_layer(fishnet_no, new_oid)
+    _update_feature_layer(fishnet_no, new_oid)
 
     fishnet_no -= 1
     
