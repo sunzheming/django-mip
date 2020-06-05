@@ -1,0 +1,20 @@
+{
+  "name": "mip",
+  "version": "1.0.0",
+  "description": "The data portal for SNARC",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sunzheming/django-mip.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sunzheming/django-mip/issues"
+  },
+  "homepage": "https://github.com/sunzheming/django-mip#readme",
+
+}

@@ -1,13 +1,74 @@
 {% extends 'base.html' %}
 
+
+
 {% block content %}
-  <h2>Upload</h2>
-  <form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    <input type="file" name="document">
-    <button type="submit">Upload file</button>
-  </form>
-  {% if url %}
-    <p>Uploaded file: <a href="{{ url }}">{{ url }}</a></p>
-  {% endif %}
+
+  {% block javascript %}
+
+    <script>
+
+
+    
+      $(document).ready(function(){
+        $(document).submit(function(event){      
+          $('#loadingModal').modal('show');
+        });
+        });
+
+    </script>
+  {% endblock%}
+  {% block page_content %}
+<div class="contianer">
+  <div class="row justify-content-center">
+    <div class="col-lg-8" >
+      <div class="card mb-4">
+        <div class="card-body">
+          <ul class="progressbar">
+
+            <li>Geo-location Picker</li>
+            <li class="active">Metadata Collection</li>
+          </ul>
+        <h2>Metadata Collection</h2>
+
+        <form method="post" enctype="multipart/form-data" action=".">
+          {% csrf_token %}
+          {{form.as_table}}
+          <input class="btn btn-primary" type="submit" value="Upload" />
+        </form>
+
+        <!-- Modal -->
+
+        <div class="modal fade" id="loadingModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Uploading...</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                {% load static %}
+                <img id='loadingImage' src="{% static 'assets/brand/loading.gif' %}" alt="My image"/>
+                <p>Uploading and analyzing the dataset, it will take about 1 minute.</p>
+                <p><b>DO NOT</b> refresh this page.</p>
+              </div>
+              <div class="modal-footer">
+                <a type="button" class="btn btn-primary" href="{% url 'home' %}">Home</a>
+                <a type="button" class="btn btn-primary" href="{% url 'map_picker' %}">Upload another one</a>     
+              </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+<!--   </div> -->
+</div>
+
+
+
+
+  {% endblock %}
 {% endblock %}

@@ -13,58 +13,274 @@
       "esri/core/watchUtils"
     ], function(WebMap, MapView, watchUtils) {
 
-      var webmap = new WebMap({
+      const webmap = new WebMap({
         portalItem: {
-          id: "41281c51f9de45edaf1c8ed44bb10e30"
+          id: "5f2da3707a1047d798a1da49e52f67f9"
         }
       });
 
-      var view = new MapView({
+      const view = new MapView({
         container: "viewDiv",
         map: webmap
       });
-      watchUtils.whenTrue(view, "stationary", function() {
+      
+
+      
+      //test watch untils
+//       watchUtils.whenTrue(view, "stationary", function() {
 
 
-          // Get the new extent of the view only when view is stationary.
-          if (view.extent) {
-            var info = [
-              view.extent.xmin.toFixed(2),
-              view.extent.xmax.toFixed(2),
-              view.extent.ymin.toFixed(2),
-              view.extent.ymax.toFixed(2)
-            ];
-            console.log(info);
-          }
-        });
-    });
+//           // Get the new extent of the view only when view is stationary.
+//           if (view.extent) {
+//             var info = [
+//               view.extent.xmin.toFixed(2),
+//               view.extent.xmax.toFixed(2),
+//               view.extent.ymin.toFixed(2),
+//               view.extent.ymax.toFixed(2)
+//             ];
+//             console.log(info);
+//           }
+//           console.log(view.constraints)
+//         });
+        
+        
 
         
+        
+        // for the refreshing list
+//         const properties = [
+//           "focused",
+//           "interacting",
+//           "updating",
+//           "ready",
+//           "resolution",
+//           "scale",
+//           "zoom",
+//           "stationary"
+//           // the following properties are commented out for space reason, comment in if you would like to see them
+//           // "resizing", "height", "width", "size"
+//           // "allLayerViews", "animation", "container", "spatialReference", "type",
+//           // "declaredClass", "graphics", "groundView",  "input",
+//           // "layerViews", "map", "navigation", "padding", "popup",
+//           // "suspended",  "ui"
+//         ];
+        
+        
+
+        
+         // Dynamically create the table of events and properties from the defined array
+//         function createTables() {
+          
+//           const propertiesTable = document.getElementById("properties");
+//           content = propertiesTable.innerHTML;
+//           for (let i = 0; i < properties.length; i++) {
+//             content +=
+//               '<div class="property" id="' +
+//               properties[i] +
+//               '">' +
+//               properties[i] +
+//               " = </div>";
+//           }
+//           propertiesTable.innerHTML = content;
+//         }
+        
+//         function setupPropertiesListener(view, name) {
+//           const propertiesRow = document.getElementById(name);
+//           view.watch(name, function(value) {
+//             propertiesRow.className = "property active";
+//             propertiesRow.innerHTML = propertiesRow.innerHTML.substring(
+//               0,
+//               propertiesRow.innerHTML.indexOf(" = ")
+//             );
+//             // set the text to the received value
+//             propertiesRow.innerHTML += " = " + JSON.stringify(value);
+//             if (propertiesRow.highlightTimeout) {
+//               clearTimeout(propertiesRow.highlightTimeout);
+//             }
+//             propertiesRow.highlightTimeout = setTimeout(function() {
+//               // after a timeout of one second disable the highlight
+//               propertiesRow.className = "property inactive";
+//             }, 1000);
+//           });
+//         }
+            
+            
+      
+//       var params = {
+//             name: name,
+//             targetSR: view.spatialReference,
+//             maxRecordCount: 1000,
+//             enforceInputFileSizeLimit: true,
+//             enforceOutputJsonSizeLimit: true
+//           };
+      
+      
+//       // create the tables for the events and properties
+//         createTables();
+    
+//         for (let i = 0; i < properties.length; i++) {
+//           setupPropertiesListener(view, properties[i]);
+//         }
+        
+        
+
+//         view.ui.add(expand, "top-right");
+      
+
+    });
+
+    
+//     test code
+    require([
+      "esri/Map",
+      "esri/views/MapView",
+      "esri/layers/FeatureLayer",
+      "esri/Graphic",
+      "esri/layers/GraphicsLayer"
+      
+    ], function(
+            Map,
+            MapView,
+            FeatureLayer,
+            Graphic,
+            GraphicsLayer
+           ){
+      
+      var map = new Map({
+        basemap: "topo",
+      });
+      const view = new MapView({   
+      container: "newMapDiv",
+      map: map,
+      zoom: 6,
+      center: [-120.042165, 37.091944]
+      });   
+    
+    
+
+    var graphicsLayer = new GraphicsLayer();
+    map.add(graphicsLayer);
+
+//     var map_data = {{map_data|safe}};
+//     for (i=0; i < map_data.length; i++){
+//       console.log(map_data[i]);
+//     };
+    
+    
+    var polygon = {
+       type: "polygon",
+       rings: [[[-14200000, 3700000], [-14200000, 3880000], [-14020000, 3880000], [-14020000, 3700000], [-14200000, 3700000]],  [[-13840000, 3880000], [-13840000, 4060000], [-13660000, 4060000], [-13660000, 3880000], [-13840000, 3880000]]],
+        spatialReference: {wkid: 3857}
+     };
+      
+    var simpleFillSymbol = {
+       type: "simple-fill",
+       color: [227, 139, 79, 0.8],  // orange, opacity 80%
+       outline: {
+         color: [255, 255, 255],
+         width: 1
+       }
+     };
+
+     var polygonGraphic = new Graphic({
+       geometry: polygon,
+       symbol: simpleFillSymbol
+     });
+    graphicsLayer.add(polygonGraphic);
+    });
+    
+//  for the datasets list scroll
+      
+    $("#scroll").on('mousewheel', function(){//我这没有做兼容firefox，你可以看下mousewheel
+    var _self = $(this),
+        delta = (event.wheelDelta) ? event.wheelDelta / 120 : -(event.detail || 0) / 3;
+    if(delta > 0 && _self.scrollTop() === 0){//滑动到顶部，再往上滑就
+        e.preventDefault();
+    //滑动到底部，再往下滑就阻止默认行为
+    }else if(delta < 0 && (_self.scrollTop() == _self.get(0).scrollHeight - _self.height())){
+        e.preventDefault();
+    }
+    });
+      
+//   datasets list div scroll end.
+    
+    
   </script>
 {% endblock %}
 
-
-
   {% block page_content %}
-        <div class="container-fluid">
-            <div class="row">
-                
-                <div class="col-sm-4">
-                    {% for file in maps %}
-                    <li class="list-group-item"> 
-                        <div class="card-body">
-                            <h5 class="card-title">{{file.title}}</h5>
-                        <p class="card-text">Upload time: {{file.date_created}}</p>
 
-                        <a href="#" class="card-link">{{file.user_name}}</a>
-                        <a href="/maps/{{ file.map_id}}" methods="GET" class="card-link">Download</a>
-                        </div>
-                    </li>
-                    {% endfor %}
-                </div>
-                <div class="col-sm-8" id="viewDiv"></div>
-            </div>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm-2">
+<!--    search    -->
+      <form method="get" action="/search/">
+        {% csrf_token %}
+        <input class="form-control mr-sm-2" type="search" name="keyword" placeholder="Search" required>
+        <button class="btn btn-primary" type="submit">Search</button>
+      </form>
+      <div class="mb-3">
+      <form method="get" action="/search/">
+        {% csrf_token %}
+        <input class="form-control mr-sm-2" type="search" name="huckeyword" placeholder="HUC Search" required>
+        <button class="btn btn-primary" type="submit">Huc Search</button>
+      </form>
+      </div>
+<!--    end search    -->
+
+      
+    </div>
+    <div class="col-sm-4" >
+    <div id='scroll'>
+    
+    {% for file in maps %}
+    <div class="list-group">
+      <li class="list-group-item list-group-item-action flex-column align-items-start">
+        <div class="d-flex w-100 justify-content-between">
+          <h5 class="card-title"><a href='{% url 'detail' pk=file.pk %}'>{{file.title}}</a></h5>
+          <small>{{file.date_created}}</small>
         </div>
+        
+        <small class="text-muted">{{file.user_name}}</small>        
+      </li>
+    </div>
+    {% empty %}
+      <div class="d-flex w-100 justify-content-between"> No result! </div>
+    {% endfor %}
+    </div>
+      
+<!--      pogination  -->
+    {% if maps.has_other_pages %}
+  <ul class="pagination">
+    {% if maps.has_previous %}
+      <li class="page-item"><a class="page-link" href="?page={{ maps.previous_page_number }}">&laquo;</a></li>
+    {% else %}
+      <li class="page-item disabled"><span class="page-link" tabindex="-1" aria-disabled="true">&laquo;</span></li>
+    {% endif %}
+    {% for i in maps.paginator.page_range %}
+      {% if maps.number == i %}
+        <li class="page-item active" aria-current="page"><span class="page-link">{{ i }} <span class="sr-only">(current)</span></span></li>
+      {% else %}
+        <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+      {% endif %}
+    {% endfor %}
+    {% if maps.has_next %}
+      <li class="page-item"><a class="page-link" href="?page={{ maps.next_page_number }}">&raquo;</a></li>
+    {% else %}
+      <li class=" page-item disabled"><span class="page-link" tabindex="-1" aria-disabled="true">&raquo;</span></li>
+    {% endif %}
+  </ul>
+{% endif %}
+<!-- pagination end -->
+
+    </div>
+  <div class="col-sm-6" id="viewDiv" ></div> 
+  </div>
+
+  
+<!--   <div id="newMapDiv"></div>
+</div>
+ -->
 
   {% endblock %}
 {% endblock %}

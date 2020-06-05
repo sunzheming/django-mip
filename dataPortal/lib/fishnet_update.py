@@ -5,11 +5,10 @@
 import numpy as np
 from arcgis.gis import GIS
 import json
-from pyproj import Transformer
 from datetime import datetime
 import ast
 import os
-
+# 多线程问题？？？？？！！！！！
 result_fishnet = []
 class Cell(object):
     def __init__(self, fishnet_data, OID):
@@ -27,28 +26,24 @@ class Cell(object):
         self.right = self.fishnet_data[str(self.OID)]['right']
         
         
-# this function will recieve a uploaded file and update the database and fishnet
-# this function will return a file name to flask and save the json file with this name
-def income_data(file_data):
+# this function will recieve a uploaded file and update the database and fishnet, return a file name to flask and save the json file with this name, example:
+# {'fishnet_data': [25441, 6321, 1561, 381, 91]}
+def fishnet_tool(location_data):
 #     fishnet_data = _fishnet_update(file_data)
-    _fishnet_update(file_data)
+    _fishnet_update(location_data)
     analysis_result = {'fishnet_data': result_fishnet}
     return(analysis_result)
         
+# input: ['lat', 'long']
+# output: OID
+def _fishnet_update(location_data):
 
-def _fishnet_update(new_data):
+    web_lat = float(location_data[0])
+    web_long = float(location_data[1])
 
-    wgs_lat = new_data['lat']
-    wgs_long = new_data['long']
-    
-    web_coor = _location_converter([wgs_lat, wgs_long])
-    
-    web_lat = web_coor[0]
-    web_long = web_coor[1]
 
     # The fishnet 5 matrix information are store in a json file.
     # If the fishnet 5 location update, this json need to update.
-#     path=os.path.abspath('.')
     path = os.path.dirname(__file__)    
     with open('%s/fishnet_5.json' % (path)) as json_file:
         fishnet5_data = json.load(json_file)
@@ -91,15 +86,6 @@ def _fishnet_update(new_data):
     
     return location_OID
 
-# convert wgs84 coordination to web mercator
-# receive and return data should be a list like [lat, long]
-def _location_converter(location_data):   
-    
-    # 4326 = wgs84,  3857 = web mercator
-    transformer = Transformer.from_crs('epsg:4326', 'epsg:3857')
-    web_coor = transformer.transform(location_data[0], location_data[1])
-
-    return web_coor
 
 # this function get the fishnet no and OID to update the fishnet data. 
 def _update_feature_layer(fishnet_no, OID):
@@ -143,3 +129,5 @@ def _calculate_next_location(old_location):
 
 # income_data('data_12.json')
 # _map_count_update(2, 10733)
+
+# fishnet_tool(['-13775157.055484595', '4893971.73348189'])

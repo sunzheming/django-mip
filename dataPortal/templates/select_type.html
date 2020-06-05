@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+  {% block page_content %}
+
+    <div class="row">
+      <h2> Please select the data type: </h2>
+      <div class="col-sm-6">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Shapefile</h5>
+            <p class="card-text">Upload a shapefile</p>
+            <a href="#" class="btn btn-primary">Next step</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-6">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Other types</h5>
+            <p class="card-text">CSV, geojson or any type of file</p>
+            <a href="/upload" class="btn btn-primary">Next step</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  {% endblock %}
+{% endblock %}

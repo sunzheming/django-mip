@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+
+
+{% block content %}
+  {% block page_content %}
+  {% load static %}
+<div class="contianer">
+  <div class="row justify-content-center">
+    <div class="col-lg-8" >
+      <div class="card mb-4">
+        <div class="card-body" id="checkImage">
+          <img id="checkMark" src="{% static 'assets/brand/checkmark.png' %}"/>
+          <div class="card-text">
+            <ul class="list-group">
+              <li class="list-group-item">
+                <a type="button" class="btn btn-primary" href="{% url 'detail' pk=data_id %}">Check the dataset</a>
+              </li>
+              <li class="list-group-item">
+                <a type="button" class="btn btn-primary" href="{% url 'home' %}">Back to home page</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+  {% endblock %}
+{% endblock %}

@@ -1,7 +1,29 @@
 {% extends 'base.html' %}
 
+
+
 {% block content %}
-  <h2 class="card-title">SNARC Data Portal</h2>
-  <p class="card-text">SNARC</p>
-  
+
+
+  {% block page_content %}
+
+<html>
+
+  <body>
+    <main role="main" class="container">
+      <div class="jumbotron">
+        <h1>SNARC Data Portal</h1>
+        <p class="lead">Welcome to the SNARC Data Portal.</p>
+        {% if user.is_authenticated %}
+          <p class="lead"> Hello, {{user.username}}! </p>
+        {% else %}
+          <p class="lead"> You need to login to continue. For login, click the buttom<p>
+          <a class="btn btn-lg btn-primary" href="{% url 'login' %}" role="button">Login &raquo;</a>
+        {% endif %}
+        
+      </div>
+    </main>
+  </body>
+</html>
+  {% endblock %}
 {% endblock %}
