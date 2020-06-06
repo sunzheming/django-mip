@@ -9,10 +9,11 @@
           "esri/widgets/Sketch",
           "esri/Map", 
           "esri/views/MapView",
-          "esri/widgets/BasemapToggle",  
+          "esri/widgets/BasemapToggle",
+          "esri/Graphic",
           "esri/layers/GraphicsLayer"
-        ], function(Sketch, Map, MapView, BasemapToggle, GraphicsLayer) {
-          const layer = new GraphicsLayer();
+        ], function(Sketch, Map, MapView, BasemapToggle, Graphic, GraphicsLayer) {
+          var layer = new GraphicsLayer();
           var map = new Map({
             basemap: "topo",
             layers: [layer]
@@ -24,11 +25,31 @@
             zoom: 6,
             center: [-120.042165, 37.091944] // longitude, latitude
           });
+
+          var study_area = {
+            type: "polygon",
+            rings: {{study_area}},
+            spatialReference: {wkid: 3857}
+          };
+          var simpleFillSymbol = {
+             type: "simple-fill",
+             color: [0, 255, 255, 0.1],  // blue, opacity 10%
+             outline: {
+               color: [0, 255, 255],
+               width: 1
+             }
+           };
+          var polygonGraphic = new Graphic({
+            geometry: study_area,
+            symbol: simpleFillSymbol
+          });
+          layer.add(polygonGraphic)
+    
           var basemapToggle = new BasemapToggle({
             view: view,
             nextBasemap: "hybrid"
           });
-
+          
 
           const sketch = new Sketch({
             layer: layer,
@@ -60,6 +81,8 @@
             }
           });
         });
+    
+    
 
       </script>
   {% endblock%}
@@ -70,13 +93,27 @@
     <div class="col-lg-8" >
       <div class="card mb-4">
         <div class="card-body">
-          <ul class="progressbar">
-
-            <li class="active">Geo-location Picker</li>
-            <li>Metadata Collection</li>
-          </ul>
-
           <div class="row">
+              
+            
+            <div class="steps-form">
+              <div class="steps-row setup-panel">
+                <div class="steps-step">
+                  <div class="btn btn-info btn-circle">1</div>
+                  <p>Pick Location</p>
+                </div>
+                <div class="steps-step">
+                  <div class="btn btn-outline-primary btn-circle"disabled="disabled">2</div>
+                  <p>Metadata Information</p>
+                </div>
+                <div class="steps-step">
+                  <div class="btn btn-outline-primary btn-circle" disabled="disabled">3</div>
+                  <p>Upload</p>
+                </div>
+              </div>
+            </div>
+              
+              
             <h2 class="col-sm-8"> Please use the point tool to select the dataset location. </h2>
             <div class="col-sm-4">
               <form method='POST'>

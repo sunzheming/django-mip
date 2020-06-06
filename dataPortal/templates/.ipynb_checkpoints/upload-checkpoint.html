@@ -24,11 +24,22 @@
     <div class="col-lg-8" >
       <div class="card mb-4">
         <div class="card-body">
-          <ul class="progressbar">
-
-            <li>Geo-location Picker</li>
-            <li class="active">Metadata Collection</li>
-          </ul>
+          <div class="steps-form">
+              <div class="steps-row setup-panel">
+                <div class="steps-step">
+                  <a href="{% url 'map_picker' %}" class="btn btn-outline-primary btn-circle">1</a>
+                  <p>Pick Location</p>
+                </div>
+                <div class="steps-step">
+                  <div class="btn btn-info btn-circle"disabled="disabled">2</div>
+                  <p>Metadata Information</p>
+                </div>
+                <div class="steps-step">
+                  <div class="btn btn-outline-primary btn-circle" disabled="disabled">3</div>
+                  <p>Upload</p>
+                </div>
+              </div>
+            </div>
         <h2>Metadata Collection</h2>
 
         <form method="post" enctype="multipart/form-data" action=".">

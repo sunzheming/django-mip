@@ -40,7 +40,12 @@ def map_picker(request):
     location_data = []
     if request.method == 'POST':
         return redirect('upload')
-    return render(request, 'map_picker.html')
+      
+    #   for display the study area
+    with open('dataPortal/lib/study_area.json', 'r') as f:
+        study_area = json.load(f)
+        ring = study_area['geometry']['rings']
+    return render(request, 'map_picker.html', {'study_area': ring })
 
 # This function handle the POST request from the JS in web map and save the latitude and longtitude in the session. 
 def location_handler(request):
@@ -148,6 +153,8 @@ def map_list(request):
             'fishnet_5': i.fishnet_5,
         }
         mapdata_array.append(data)
+        
+
     return render(request, 'map_list.html', {
         'maps': maps_p,
         'map_data': mapdata_array
