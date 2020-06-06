@@ -88,6 +88,16 @@
   {% endblock%}
 
   {% block page_content %}
+
+    {% if messages %}
+    <div class="alert alert-danger" role="alert">
+      {% for message in messages %}
+        {{ message }}
+      {% endfor %}
+    </div>
+    {% endif %}
+
+
 <div class="contianer-fluid">
   <div class="row justify-content-center">
     <div class="col-lg-8" >

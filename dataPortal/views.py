@@ -8,7 +8,7 @@ from django.core.paginator import Paginator
 
 import json
 import os
-from django.contrib import auth
+from django.contrib import auth, messages
 from django.contrib.auth.decorators import login_required
 
 from .forms import MetadataCollect
@@ -23,6 +23,10 @@ import threading
 from pyproj import Transformer
 
 from .models import MapData
+
+from arcgis.geometry import intersect, Point, Geometry
+
+
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "key/mip-project-270718-5ed8d7aeb413.json"
 
 class Home(TemplateView):
@@ -38,13 +42,26 @@ def select_file_type(request):
 @login_required
 def map_picker(request):
     location_data = []
-    if request.method == 'POST':
-        return redirect('upload')
-      
-    #   for display the study area
     with open('dataPortal/lib/study_area.json', 'r') as f:
         study_area = json.load(f)
         ring = study_area['geometry']['rings']
+    if request.method == 'POST':
+        location_data = request.session.get('location_data')['data[]']
+        x = float(location_data[0])
+        y = float(location_data[1])
+
+        point = [Point({'x': x, 'y': y, 'spatialReference': {"wkid" : 3857}})]
+        geometry = Geometry({'rings': ring, 'spatialReference': {"wkid" : 3857}})
+        
+        print(point, geometry)
+        result = intersect({'wkid': 3857}, point, geometry)
+        print(result)
+        if result[0]['x'] == 'NaN':
+            messages.info(request, 'The point you select not in the study area, please try again.')
+        else:
+            return redirect('upload')
+      
+    #   for display the study area
     return render(request, 'map_picker.html', {'study_area': ring })
 
 # This function handle the POST request from the JS in web map and save the latitude and longtitude in the session. 
