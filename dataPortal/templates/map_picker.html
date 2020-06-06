@@ -124,12 +124,16 @@
             </div>
               
               
-            <h2 class="col-sm-8"> Please use the point tool to select the dataset location. </h2>
+            <h3 class="mx-auto"> Please use 'Draw a Point' tool on the upper right corner of the map to select a location of dataset. </h3>
+            {% load static %}
+            <div class="col-sm-8">
+              <img id="picker_example" src="{% static 'assets/brand/location_picker_example.png' %}"/>
+            </div>
             <div class="col-sm-4">
               <form method='POST'>
                 {% csrf_token %}
                 <div class="d-flex p-2">
-                  <input class="btn btn-primary" type="submit" value="next"/>
+                  <input id="picker_next" class="btn btn-primary" type="submit" value="next"/>
                 </div>
               </form>
             </div>

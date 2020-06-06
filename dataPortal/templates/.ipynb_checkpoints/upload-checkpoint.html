@@ -18,17 +18,8 @@
 
     </script>
   {% endblock%}
+
   {% block page_content %}
-
-{% if messages %}
-<ul class="messages">
-    {% for message in messages %}
-    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-    {% endfor %}
-</ul>
-{% endif %}
-
-
 <div class="contianer">
   <div class="row justify-content-center">
     <div class="col-lg-8" >
