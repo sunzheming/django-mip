@@ -70,8 +70,11 @@
                   <ul class="list-group mb-3">
                     <li class="list-group-item d-flex justify-content-between lh-condensed">
                     <div>
-                        <h6 class="my-0">Download this dataset</h6>
-                        <p><a class="btn btn-sm btn-primary" href={{ dataset.file_location.url }} role="button">Download</a></p>
+                      <h6 class="my-0">Download this dataset</h6>
+<!--                       <form method="get" action="/download/"> -->
+                          <p><a class="btn btn-sm btn-primary" href="{{ dataset.file_location.url }}" role="button">Download</a></p>
+<!--                         <button class="btn btn-primary" type="submit">Download</button> -->
+<!--                       </form> -->
                     </div>
                     </li>
                     <li class="list-group-item d-flex justify-content-between lh-condensed">

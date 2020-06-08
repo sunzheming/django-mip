@@ -6,9 +6,17 @@ Python             3.6.9
 
 GCP:
 
-Web server 34.94.219.251
+Web server http://34.94.195.199/
 
 Sql server 34.94.253.37
 
 
-Cloud storage jimmy-mip-dev
+Cloud storage snarc-dataset
+
+Installing
+1. clone the Git repo
+2. move the GCP key folder to the root
+3. move the huc_data to django-mip/dataPortal/lib/huc_data
+4. setup the environment in the djangoMip_uwsgi.ini
+5. setup the Nginx
+6. run django in Uwsgi

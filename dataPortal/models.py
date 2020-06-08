@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User, Group
- 
+import uuid
+
+
 class Tag(models.Model):
     name = models.CharField(max_length=100)
     
@@ -20,7 +22,14 @@ class Author(models.Model):
     def __str__(self):
         return self.first_name + self.last_name
       
-      
+
+def uuid_filename(instance, filename):
+    ext = filename.split('.')[-1]
+    str_uuid = str(uuid.uuid4())
+    uuid_name = "uploaded/%s-%s.%s" % (filename.split('.')[0], str_uuid, ext)
+    return uuid_name 
+  
+  
 class MapData(models.Model):
     data_id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=255)
@@ -39,7 +48,7 @@ class MapData(models.Model):
     huc_12 = models.CharField(max_length=64, null=True)
     date_created = models.DateTimeField(auto_now=True)
     date_modified = models.DateTimeField(auto_now=True)
-    file_location = models.FileField(upload_to='uploaded/', default=None)
+    file_location = models.FileField(upload_to=uuid_filename, default=None)
     uploader = models.ForeignKey(User, on_delete=models.CASCADE, default = 1)
     tags = models.ManyToManyField(Tag)
     method = models.TextField(blank=True)

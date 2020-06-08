@@ -6,6 +6,7 @@ from django.views.generic import TemplateView, ListView, CreateView
 from django.core.files.storage import FileSystemStorage
 from django.core.paginator import Paginator
 
+import uuid
 import json
 import os
 from django.contrib import auth, messages
@@ -52,10 +53,7 @@ def map_picker(request):
 
         point = [Point({'x': x, 'y': y, 'spatialReference': {"wkid" : 3857}})]
         geometry = Geometry({'rings': ring, 'spatialReference': {"wkid" : 3857}})
-        
-        print(point, geometry)
         result = intersect({'wkid': 3857}, point, geometry)
-        print(result)
         if result[0]['x'] == 'NaN':
             messages.info(request, 'The point you select not in the study area, please try again.')
         else:
@@ -78,6 +76,7 @@ def upload(request):
     if request.method == 'POST':
         form = MetadataCollect(request.POST, request.FILES)
         if form.is_valid():
+            file_location = request.FILES['file_location']
             # init the loading status to 1
             request.session['loading_status'] = 1
             location_data = request.session.get('location_data')['data[]']
@@ -127,7 +126,6 @@ def upload(request):
             map_data.access_group.set(request_body.getlist('access_group'))
             map_data.save()
             request.session['loading_status'] = 0
-#             t = threading.Thread(target=_uploaded_handler, args=[request])
             return render(request, 'success.html', {'data_id':map_data.data_id})
         else:
             print('NOT PASSED')
@@ -211,17 +209,6 @@ def _data_pagination(data, request):
 def detail(request, pk):
     dataset = get_object_or_404(MapData, pk=pk)
     return render(request, 'detail.html', context={'dataset': dataset})
-
-@login_required
-def download(request, filename):
-    file_path = 'uploaded/%s' % (filename)
-    
-    if os.path.exists(file_path):
-        with open(file_path, 'rb') as fh:
-            response = HttpResponse(fh.read(), content_type="application/vnd.ms-excel")
-            response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file_path)
-            return response
-    raise Http404
 
 
 @login_required
