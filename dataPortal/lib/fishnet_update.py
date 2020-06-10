@@ -8,7 +8,6 @@ import json
 from datetime import datetime
 import ast
 import os
-# 多线程问题？？？？？！！！！！
 result_fishnet = []
 class Cell(object):
     def __init__(self, fishnet_data, OID):
@@ -107,10 +106,7 @@ def _merge_fishnet(fishnet_no, location_x, location_y):
     new_location_x = _calculate_next_location(location_x)
     new_location_y = _calculate_next_location(location_y)
     fishnet_len = 10 * pow(2, fishnet_no - 1)
-    print(fishnet_len)
     new_oid = ((fishnet_len - new_location_x - 1) * fishnet_len) + new_location_y + 1
-    print(fishnet_no, new_location_x, new_location_y, new_oid)
-#     new_oid = (location_y - 1) * (10 * pow(2, fishnet_no - 1)) + location_x
     _update_feature_layer(fishnet_no, new_oid)
 
     fishnet_no -= 1
