@@ -1,20 +1,21 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
-
-from datetime import datetime
 from django.views.generic import TemplateView, ListView, CreateView
 from django.core.files.storage import FileSystemStorage
 from django.core.paginator import Paginator
+from django.contrib import auth, messages
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User, Group
+from django import template
 
+from datetime import datetime
 import uuid
 import json
 import os
-from django.contrib import auth, messages
-from django.contrib.auth.decorators import login_required
 
 from .forms import MetadataCollect
 from .models import MapData
-from django.contrib.auth.models import User, Group
+
 from .lib.fishnet_update import fishnet_tool
 from .lib.watershedTool import get_watershed_id
 
@@ -23,7 +24,7 @@ import threading
 
 from pyproj import Transformer
 
-from .models import MapData
+from .models import MapData, Tag
 
 from arcgis.geometry import intersect, Point, Geometry
 
@@ -32,7 +33,6 @@ os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "key/mip-project-270718-5ed8d7aeb
 
 class Home(TemplateView):
     template_name = 'home.html'
-
 
 
 @login_required
@@ -154,25 +154,29 @@ def map_list(request):
     else:
         user_group = request.user.groups.values_list('id', flat=True)
         group_list = tuple(user_group)
-        maps = MapData.objects.filter(access_group__in=group_list).order_by('-data_id')
-    maps_p = _data_pagination(maps, request)
-#     _handle_ring_data(maps_p)
-    mapdata_array = []
-    for i in maps_p:
+        datasets = MapData.objects.filter(access_group__in=group_list).order_by('-data_id')
+    # For the map list, with out the searching, do not need the pagination.
+    datasets_array = []
+    for i in datasets:
         data = {
             'data_id': i.data_id,
+            'title': i.title,
             'fishnet_1': i.fishnet_1,
             'fishnet_2': i.fishnet_2,
             'fishnet_3': i.fishnet_3,
             'fishnet_4': i.fishnet_4,
             'fishnet_5': i.fishnet_5,
+            'lat': i.latitude,
+            'long': i.longitude,
         }
-        mapdata_array.append(data)
+        datasets_array.append(data)
         
-
+    tags = Tag.objects.all()
+    
     return render(request, 'map_list.html', {
-        'maps': maps_p,
-        'map_data': mapdata_array
+        'maps': datasets,
+        'datasets_array': datasets_array,
+        'tags': tags
     })
   
 
@@ -181,18 +185,44 @@ def search(request):
     keyword = request.GET.get('keyword')
     huckeyword = request.GET.get('huckeyword')
     error_msg = ''
+    user_group = request.user.groups.values_list('id', flat=True)
+    group_list = tuple(user_group)
     if not keyword and not huckeyword:
         error_msg = 'Please entry the search word.'
     elif huckeyword:
-        map_data = MapData.objects.filter(huc_12__icontains=huckeyword)
+        if request.user.is_superuser:
+            datasets = MapData.objects.filter(huc_12__icontains=huckeyword).order_by('-data_id')
+        else:
+            datasets = MapData.objects.filter(huc_12__icontains=huckeyword).filter(access_group__in=group_list).order_by('-data_id')
     else:
-        map_data = MapData.objects.filter(title__icontains=keyword)
-    data_list = _data_pagination(map_data, request)
-    return render(request, 'map_list.html', {'error_msg': error_msg, 'maps': data_list, 'map_data': map_data})
+        if request.user.is_superuser:
+            datasets = MapData.objects.filter(title__icontains=keyword).order_by('-data_id')
+        else:
+            datasets = MapData.objects.filter(title__icontains=keyword).filter(access_group__in=group_list).order_by('-data_id')
+#     data_list = _data_pagination(map_data, request)
+    datasets_array = _webmap_data_handler(datasets)
+    tags = Tag.objects.all()
+    return render(request, 'map_list.html', {'error_msg': error_msg, 'maps': datasets, 'datasets_array': datasets_array, 'tags': tags})
 
-def _handle_ring_data(data):
-    pass
-
+def _webmap_data_handler(datasets):
+    datasets_array = []
+    for i in datasets:
+        data = {
+            'data_id': i.data_id,
+            'title': i.title,
+            'fishnet_1': i.fishnet_1,
+            'fishnet_2': i.fishnet_2,
+            'fishnet_3': i.fishnet_3,
+            'fishnet_4': i.fishnet_4,
+            'fishnet_5': i.fishnet_5,
+            'lat': i.latitude,
+            'long': i.longitude,
+        }
+        datasets_array.append(data)
+    
+    return datasets_array
+    
+    
 def _data_pagination(data, request):
     paginator = Paginator(data, 10)
     page = request.GET.get('page', 1)
@@ -208,7 +238,9 @@ def _data_pagination(data, request):
 @login_required
 def detail(request, pk):
     dataset = get_object_or_404(MapData, pk=pk)
-    return render(request, 'detail.html', context={'dataset': dataset})
+    tag_list = dataset.tags.all()
+    author_list = dataset.author.all()
+    return render(request, 'detail.html', context={'dataset': dataset, 'tags': tag_list, 'authors': author_list})
 
 
 @login_required

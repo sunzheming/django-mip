@@ -25,110 +25,15 @@
       });
       
 
-      
-      //test watch untils
-//       watchUtils.whenTrue(view, "stationary", function() {
-
-
-//           // Get the new extent of the view only when view is stationary.
-//           if (view.extent) {
-//             var info = [
-//               view.extent.xmin.toFixed(2),
-//               view.extent.xmax.toFixed(2),
-//               view.extent.ymin.toFixed(2),
-//               view.extent.ymax.toFixed(2)
-//             ];
-//             console.log(info);
-//           }
-//           console.log(view.constraints)
-//         });
-        
-        
-
-        
-        
-        // for the refreshing list
-//         const properties = [
-//           "focused",
-//           "interacting",
-//           "updating",
-//           "ready",
-//           "resolution",
-//           "scale",
-//           "zoom",
-//           "stationary"
-//           // the following properties are commented out for space reason, comment in if you would like to see them
-//           // "resizing", "height", "width", "size"
-//           // "allLayerViews", "animation", "container", "spatialReference", "type",
-//           // "declaredClass", "graphics", "groundView",  "input",
-//           // "layerViews", "map", "navigation", "padding", "popup",
-//           // "suspended",  "ui"
-//         ];
-        
-        
-
-        
-         // Dynamically create the table of events and properties from the defined array
-//         function createTables() {
-          
-//           const propertiesTable = document.getElementById("properties");
-//           content = propertiesTable.innerHTML;
-//           for (let i = 0; i < properties.length; i++) {
-//             content +=
-//               '<div class="property" id="' +
-//               properties[i] +
-//               '">' +
-//               properties[i] +
-//               " = </div>";
-//           }
-//           propertiesTable.innerHTML = content;
-//         }
-        
-//         function setupPropertiesListener(view, name) {
-//           const propertiesRow = document.getElementById(name);
-//           view.watch(name, function(value) {
-//             propertiesRow.className = "property active";
-//             propertiesRow.innerHTML = propertiesRow.innerHTML.substring(
-//               0,
-//               propertiesRow.innerHTML.indexOf(" = ")
-//             );
-//             // set the text to the received value
-//             propertiesRow.innerHTML += " = " + JSON.stringify(value);
-//             if (propertiesRow.highlightTimeout) {
-//               clearTimeout(propertiesRow.highlightTimeout);
-//             }
-//             propertiesRow.highlightTimeout = setTimeout(function() {
-//               // after a timeout of one second disable the highlight
-//               propertiesRow.className = "property inactive";
-//             }, 1000);
-//           });
-//         }
-            
-            
-      
-//       var params = {
-//             name: name,
-//             targetSR: view.spatialReference,
-//             maxRecordCount: 1000,
-//             enforceInputFileSizeLimit: true,
-//             enforceOutputJsonSizeLimit: true
-//           };
-      
-      
-//       // create the tables for the events and properties
-//         createTables();
-    
-//         for (let i = 0; i < properties.length; i++) {
-//           setupPropertiesListener(view, properties[i]);
-//         }
-        
-        
-
-//         view.ui.add(expand, "top-right");
-      
+ 
 
     });
 
+    
+    
+    
+    
+    
     
 //     test code
     require([
@@ -158,8 +63,9 @@
       });   
     
     
-
+      
       var graphicsLayer = new GraphicsLayer();
+    
       map.add(graphicsLayer);
 
 //     var map_data = {{map_data|safe}};
@@ -168,26 +74,57 @@
 //     };
     
     
-    var polygon = {
-       type: "polygon",
-       rings: [[[-14200000, 3700000], [-14200000, 3880000], [-14020000, 3880000], [-14020000, 3700000], [-14200000, 3700000]],  [[-13840000, 3880000], [-13840000, 4060000], [-13660000, 4060000], [-13660000, 3880000], [-13840000, 3880000]]],
+//     var polygon = {
+//        type: "polygon",
+//        rings: [[[-14200000, 3700000], [-14200000, 3880000], [-14020000, 3880000], [-14020000, 3700000], [-14200000, 3700000]],  [[-13840000, 3880000], [-13840000, 4060000], [-13660000, 4060000], [-13660000, 3880000], [-13840000, 3880000]]],
+//         spatialReference: {wkid: 3857}
+//      };
+//     var datasets = {{datasets_array|safe}};
+    var datasets = {{datasets_array|safe}};
+    for (i=0; i < datasets.length; i++){
+      var point = {
+        type: "point",
+        longitude: datasets[i]['long'],
+        latitude: datasets[i]['lat'],
         spatialReference: {wkid: 3857}
-     };
+      };
       
-    var simpleFillSymbol = {
-       type: "simple-fill",
-       color: [227, 139, 79, 0.8],  // orange, opacity 80%
-       outline: {
-         color: [255, 255, 255],
-         width: 1
-       }
-     };
+    
 
-     var polygonGraphic = new Graphic({
-       geometry: polygon,
-       symbol: simpleFillSymbol
-     });
-    graphicsLayer.add(polygonGraphic);
+      var simpleMarkerSymbol = {
+        type: "simple-marker",
+        color: [226, 119, 40],  // orange
+        outline: {
+         color: [255, 255, 255], // white
+         width: 1
+        }
+      };
+      
+      
+      var data_id = datasets[i]['data_id'];
+      url = 'datasets/' + datasets[i]['data_id'].toString();
+      
+      function setContentInfo(feature){
+        // create a chart for example
+        var newContent = document.createTextNode("Hi there and greetings!"); 
+        return newContent;
+      }
+      
+      
+      var popup = {
+        "title": datasets[i]["title"],
+        "content": setContentInfo
+      };
+      
+
+      var polygonGraphic = new Graphic({
+        geometry: point,
+        symbol: simpleMarkerSymbol,
+        popupTemplate: popup
+      });
+      graphicsLayer.add(polygonGraphic);
+    };
+    
     });
     
 //  for the datasets list scroll
@@ -220,13 +157,22 @@
         <input class="form-control mr-sm-2" type="search" name="keyword" placeholder="Search" required>
         <button class="btn btn-primary" type="submit">Search</button>
       </form>
-      <div class="mb-3">
+
+
       <form method="get" action="/search/">
         {% csrf_token %}
         <input class="form-control mr-sm-2" type="search" name="huckeyword" placeholder="HUC Search" required>
         <button class="btn btn-primary" type="submit">Huc Search</button>
       </form>
-      </div>
+        
+      <h4> Tags </h4>
+
+      {% for tag in tags %}
+
+        <span class="badge badge-pill badge-info">{{tag}}</span>
+      {% endfor %}
+
+
 <!--    end search    -->
 
       
@@ -238,11 +184,12 @@
     <div class="list-group">
       <li class="list-group-item list-group-item-action flex-column align-items-start">
         <div class="d-flex w-100 justify-content-between">
-          <h5 class="card-title"><a href='{% url 'detail' pk=file.pk %}'>{{file.title}}</a></h5>
-          <small>{{file.date_created}}</small>
+          <h5 class="card-title" id="result_title"><a href="{% url 'detail' pk=file.pk %}">{{file.title}}</a></h5>
+
         </div>
         
-        <small class="text-muted">{{file.user_name}}</small>        
+        <small class="text-muted">Uploader: {{file.uploader}} |</small>     
+        <small>{{file.date_created}}</small>
       </li>
     </div>
     {% empty %}
@@ -274,14 +221,12 @@
 {% endif %}
 <!-- pagination end -->
 
-    </div>
-  <div class="col-sm-6" id="viewDiv" ></div> 
+  </div>
+    <div class="col-sm-6" id="newMapDiv" ></div> 
   </div>
 
-  
-<!--   <div id="newMapDiv"></div>
 </div>
- -->
+
 
   {% endblock %}
 {% endblock %}
