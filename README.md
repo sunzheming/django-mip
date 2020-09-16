@@ -20,3 +20,6 @@ Installing
 4. setup the environment in the djangoMip_uwsgi.ini
 5. setup the Nginx
 6. run django in Uwsgi
+
+
+if the ip changed, change the setting in the Django and Nginx config

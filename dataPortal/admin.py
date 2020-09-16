@@ -10,7 +10,7 @@ from .models import MapData, Tag, Author
 class MapDataAdmin(admin.ModelAdmin):
     list_display = ('data_id', 'title', 'date_created', 'uploader')
     list_display_links = ('title',)
-    list_filter = ('date_created', 'author')
+    list_filter = ('date_created', 'author', 'tags')
     
     
 # 限制用户权限，只能看到自己编辑的文章

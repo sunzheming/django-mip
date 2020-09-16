@@ -12,15 +12,12 @@ gis = GIS()
 # the dataset point 
 
 def get_watershed_id(location_data):
-#     print(location_data)
     location_data = _location_converter(location_data)
-    print(location_data)
     x = float(location_data[1])
     y = float(location_data[0])
     
     # generate the geometry point
     point = [Point({'x': x, 'y': y, 'spatialReference': {"wkid" : 4269}})]
-    print(point)
     huc_no = 4
     huc12 = _huc_calculate(point)
     return huc12
@@ -44,8 +41,7 @@ def _huc_calculate(point, huc_no=4, huc_last='somethingrandom'):
             if result[0]['x'] == 'NaN':
                 continue
             else:
-                print(huc_no, huc)
-                print('==========')
+
                 return _huc_calculate(point, huc_no + 2, huc)
 
                 

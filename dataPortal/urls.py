@@ -15,5 +15,5 @@ urlpatterns = [
     path('upload/location_handler', views.location_handler, name='location_handler'),
     path('datasets/<int:pk>/', views.detail, name='detail'),
     path('success', views.success, name='success'),
-    url(r'^search/$', views.search, name='search'),
+    path('datasets_fishnet', views.map_list_demo, name='fishnet_demo'),
 ]

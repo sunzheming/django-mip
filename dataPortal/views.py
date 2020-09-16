@@ -6,6 +6,7 @@ from django.core.paginator import Paginator
 from django.contrib import auth, messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User, Group
+from django.db.models import Q
 from django import template
 
 from datetime import datetime
@@ -146,63 +147,95 @@ def _location_converter(location_data):
     
     return web_coor           
 
-
 @login_required
-def map_list(request):
-    if request.user.is_superuser:
-        maps = MapData.objects.all().order_by('-data_id')
-    else:
-        user_group = request.user.groups.values_list('id', flat=True)
-        group_list = tuple(user_group)
-        datasets = MapData.objects.filter(access_group__in=group_list).order_by('-data_id')
-    # For the map list, with out the searching, do not need the pagination.
-    datasets_array = []
-    for i in datasets:
-        data = {
-            'data_id': i.data_id,
-            'title': i.title,
-            'fishnet_1': i.fishnet_1,
-            'fishnet_2': i.fishnet_2,
-            'fishnet_3': i.fishnet_3,
-            'fishnet_4': i.fishnet_4,
-            'fishnet_5': i.fishnet_5,
-            'lat': i.latitude,
-            'long': i.longitude,
-        }
-        datasets_array.append(data)
-        
-    tags = Tag.objects.all()
-    
-    return render(request, 'map_list.html', {
-        'maps': datasets,
-        'datasets_array': datasets_array,
-        'tags': tags
+def map_list_demo(request):
+    maps = MapData.objects.all().order_by('-data_id')
+    return render(request, 'map_list_demo.html', {
+        'maps': maps
     })
   
-
 @login_required
-def search(request):
+def map_list(request):
+    # for the search part
+    tag = request.GET.get('tag')
     keyword = request.GET.get('keyword')
-    huckeyword = request.GET.get('huckeyword')
-    error_msg = ''
     user_group = request.user.groups.values_list('id', flat=True)
     group_list = tuple(user_group)
-    if not keyword and not huckeyword:
-        error_msg = 'Please entry the search word.'
-    elif huckeyword:
-        if request.user.is_superuser:
-            datasets = MapData.objects.filter(huc_12__icontains=huckeyword).order_by('-data_id')
-        else:
-            datasets = MapData.objects.filter(huc_12__icontains=huckeyword).filter(access_group__in=group_list).order_by('-data_id')
+    if keyword:
+        error_msg = ''
+        datasets = MapData.objects.filter(Q(title__contains=keyword) | Q(abstract__contains=keyword) | Q(huc_12__contains=keyword) | Q(abstract__contains=keyword) | Q(note__contains=keyword)).order_by('-data_id')
+
+        if not request.user.is_superuser:
+            datasets = datasets.filter(access_group__in=group_list)
+        #uncommand this line when need the pagination.
+    #     data_list = _data_pagination(map_data, request)
+        datasets_array = _webmap_data_handler(datasets)
+        tags = Tag.objects.all()
+        return render(request, 'map_list.html', {'error_msg': error_msg, 'maps': datasets, 'datasets_array': datasets_array, 'tags': tags})
+    if tag:
+        error_msg = ''
+        datasets = MapData.objects.filter(tags__name=tag).order_by('-data_id')
+        if not request.user.is_superuser:
+            dataset = datasets.filter(access_group__in=group_list)
+        datasets_array = _webmap_data_handler(datasets)
+        tags = Tag.objects.all()
+        return render(request, 'map_list.html', {'error_msg': error_msg, 'maps': datasets, 'datasets_array': datasets_array, 'tags': tags})
     else:
         if request.user.is_superuser:
-            datasets = MapData.objects.filter(title__icontains=keyword).order_by('-data_id')
+            datasets = MapData.objects.all().order_by('-data_id')
         else:
-            datasets = MapData.objects.filter(title__icontains=keyword).filter(access_group__in=group_list).order_by('-data_id')
-#     data_list = _data_pagination(map_data, request)
-    datasets_array = _webmap_data_handler(datasets)
-    tags = Tag.objects.all()
-    return render(request, 'map_list.html', {'error_msg': error_msg, 'maps': datasets, 'datasets_array': datasets_array, 'tags': tags})
+            user_group = request.user.groups.values_list('id', flat=True)
+            group_list = tuple(user_group)
+            datasets = MapData.objects.filter(access_group__in=group_list).order_by('-data_id')
+        # For the map list, without the searching, do not need the pagination.
+        datasets_array = []
+        for i in datasets:
+            data = {
+                'data_id': i.data_id,
+                'title': i.title,
+                'fishnet_1': i.fishnet_1,
+                'fishnet_2': i.fishnet_2,
+                'fishnet_3': i.fishnet_3,
+                'fishnet_4': i.fishnet_4,
+                'fishnet_5': i.fishnet_5,
+                'lat': i.latitude,
+                'long': i.longitude,
+            }
+            datasets_array.append(data)
+
+        tags = Tag.objects.all()
+
+        return render(request, 'map_list.html', {
+            'maps': datasets,
+            'datasets_array': datasets_array,
+            'tags': tags
+        })
+    
+
+
+# @login_required
+# def search(request):
+#     keyword = request.GET.get('keyword')
+#     huckeyword = request.GET.get('huckeyword')
+#     error_msg = ''
+#     user_group = request.user.groups.values_list('id', flat=True)
+#     group_list = tuple(user_group)
+#     if not keyword and not huckeyword:
+#         error_msg = 'Please entry the search word.'
+#     elif huckeyword:
+#         if request.user.is_superuser:
+#             datasets = MapData.objects.filter(huc_12__icontains=huckeyword).order_by('-data_id')
+#         else:
+#             datasets = MapData.objects.filter(huc_12__icontains=huckeyword).filter(access_group__in=group_list).order_by('-data_id')
+#     else:
+#         if request.user.is_superuser:
+#             datasets = MapData.objects.filter(title__icontains=keyword).order_by('-data_id')
+#         else:
+#             datasets = MapData.objects.filter(title__icontains=keyword).filter(access_group__in=group_list).order_by('-data_id')
+# #     data_list = _data_pagination(map_data, request)
+#     datasets_array = _webmap_data_handler(datasets)
+#     tags = Tag.objects.all()
+#     return render(request, 'map_list.html', {'error_msg': error_msg, 'maps': datasets, 'datasets_array': datasets_array, 'tags': tags})
 
 def _webmap_data_handler(datasets):
     datasets_array = []

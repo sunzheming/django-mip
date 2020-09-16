@@ -150,32 +150,34 @@
 
 <div class="container-fluid">
   <div class="row">
-    <div class="col-sm-2">
+    <div class="col-sm-3">
 <!--    search    -->
-      <form method="get" action="/search/">
-        {% csrf_token %}
-        <input class="form-control mr-sm-2" type="search" name="keyword" placeholder="Search" required>
+      <h4> Search </h4>
+      <form method="get" action="/datasets/">
+        <label> Search with the keyword or HUC#. </label>
+        <input class="form-control mr-sm-2" type="search" name="keyword" placeholder="Keyword or HUC#" required>
         <button class="btn btn-primary" type="submit">Search</button>
       </form>
-
-
-      <form method="get" action="/search/">
-        {% csrf_token %}
-        <input class="form-control mr-sm-2" type="search" name="huckeyword" placeholder="HUC Search" required>
-        <button class="btn btn-primary" type="submit">Huc Search</button>
-      </form>
-        
+      
       <h4> Tags </h4>
-
-      {% for tag in tags %}
-
-        <span class="badge badge-pill badge-info">{{tag}}</span>
-      {% endfor %}
+      <form method="get" action="/datasets/">
+        <div class="form-group">
+          <label for="exampleFormControlSelect2">Press "shift" and click to select multiple tags.</label>
+          <select multiple class="form-control" name="tag">
+            {% for tag in tags %}
+            <option>{{tag}}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <button class="btn btn-primary" type="submit">Submit</button>
+      </form>
 
 
 <!--    end search    -->
-
-      
+<!--   for demo used only   -->
+      <HR>
+    <a class="btn btn-outline-success my-2 my-sm-0" href="{% url 'fishnet_demo' %}">Fishnet View</a>
+<!--   for demo used only   -->
     </div>
     <div class="col-sm-4" >
     <div id='scroll'>
@@ -222,7 +224,7 @@
 <!-- pagination end -->
 
   </div>
-    <div class="col-sm-6" id="newMapDiv" ></div> 
+    <div class="col-sm-5" id="newMapDiv" ></div> 
   </div>
 
 </div>
